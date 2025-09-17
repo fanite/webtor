@@ -22,7 +22,7 @@ jobs:
       -
         name: Apply Patches
         run: |
-          git am --signoff patches/*.patch || git am --abort
+          git am --signoff patchs/*.patch || git am --abort
 
       -
         name: Docker meta
