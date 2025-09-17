@@ -22,6 +22,8 @@ jobs:
       -
         name: Apply Patches
         run: |
+          git config --global user.email "fanite@qq.com"
+          git config --global user.name ${{ github.actor }}
           git am --signoff patchs/*.patch || git am --abort
 
       -
