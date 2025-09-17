@@ -1,0 +1,92 @@
+From 8d571d1767fdc7b6f49bf0dc073cb7e818ad2dc5 Mon Sep 17 00:00:00 2001
+From: fanite <fanite@qq.com>
+Date: Wed, 17 Sep 2025 23:19:21 +0800
+Subject: [PATCH] update dockerfile
+
+---
+ .github/workflows/docker-image.yml |  5 ++++
+ Dockerfile                         | 40 +++++++++++++++++++-----------
+ 2 files changed, 30 insertions(+), 15 deletions(-)
+
+diff --git a/.github/workflows/docker-image.yml b/.github/workflows/docker-image.yml
+index 0f03584..3e54566 100644
+--- a/.github/workflows/docker-image.yml
++++ b/.github/workflows/docker-image.yml
+@@ -19,6 +19,11 @@ jobs:
+       -
+         name: Checkout
+         uses: actions/checkout@v4
++      -
++        name: Apply Patches
++        run: |
++          git am --signoff patches/*.patch || git am --abort
++
+       -
+         name: Docker meta
+         id: meta
+diff --git a/Dockerfile b/Dockerfile
+index ed75419..f8089f9 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -221,6 +221,10 @@ RUN ./configure --prefix=/usr/local/nginx \
+ 
+ FROM alpine:$ALPINE_VER AS base
+ 
++ARG USER=webtor
++ARG UID=1001
++ARG GID=1001
++
+ ARG S6_OVERLAY_VER
+ ARG S6_VERBOSITY
+ ENV S6_VERBOSITY=$S6_VERBOSITY
+@@ -233,26 +237,32 @@ RUN apk --no-cache add redis ffmpeg ca-certificates openssl pcre zlib envsubst u
+ 
+ WORKDIR /app
+ 
+-COPY --from=build-torrent-store /app/bin/* .
+-COPY --from=build-magnet2torrent /app/bin/* .
+-COPY --from=build-external-proxy /app/bin/* .
+-COPY --from=build-torrent-web-seeder /app/bin/* .
+-COPY --from=build-torrent-web-seeder-cleaner /app/bin/* .
+-COPY --from=build-content-transcoder /app/bin/* .
+-COPY --from=build-torrent-archiver /app/bin/* .
+-COPY --from=build-srt2vtt /app/bin/* .
+-COPY --from=build-torrent-http-proxy /app/bin/* .
+-COPY --from=build-rest-api /app/bin/* .
+-COPY --from=build-web-ui /app/bin/* .
+-COPY --from=build-web-ui /app/src/web-ui/templates /app/templates
+-COPY --from=build-web-ui /app/src/web-ui/pub /app/pub
+-COPY --from=build-web-ui-assets /app/assets/dist /app/assets/dist
+-COPY --from=build-nginx-vod /usr/local/nginx /usr/local/nginx
++RUN addgroup -g ${GID} ${USER} && \
++    adduser -D -u ${UID} -G ${USER} ${USER} && \
++    mkdir -p /data
++
++COPY --from=build-torrent-store --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-magnet2torrent --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-external-proxy --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-torrent-web-seeder --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-torrent-web-seeder-cleaner --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-content-transcoder --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-torrent-archiver --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-srt2vtt --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-torrent-http-proxy --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-rest-api --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-web-ui --chmod=755 --chown=${UID}:${GID} /app/bin/* .
++COPY --from=build-web-ui --chmod=755 --chown=${UID}:${GID} /app/src/web-ui/templates /app/templates
++COPY --from=build-web-ui --chmod=755 --chown=${UID}:${GID} /app/src/web-ui/pub /app/pub
++COPY --from=build-web-ui-assets --chmod=755 --chown=${UID}:${GID} /app/assets/dist /app/assets/dist
++COPY --from=build-nginx-vod --chmod=755 --chown=${UID}:${GID} /usr/local/nginx /usr/local/nginx
+ 
+ COPY etc/webtor /etc/webtor
+ COPY etc/nginx/conf /usr/local/nginx/conf
+ COPY s6-overlay /etc/s6-overlay
+ 
++USER ${USER}
++
+ ENV DOMAIN=http://localhost:8080
+ 
+ EXPOSE 8080
+-- 
+2.51.0.windows.1
+
