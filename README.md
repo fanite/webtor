@@ -10,14 +10,16 @@ This is the self-hosted version of [webtor.io](https://webtor.io), implemented a
    - **Video:** `avi`, `mkv`, `mp4`, `webm`, `m4v`, `ts`, `vob`
    - **Audio:** `mp3`, `wav`, `ogg`, `flac`, `m4a`
 - **Download Entire Torrent as a ZIP Archive:** Download your torrent as a ZIP archive on-the-fly while preserving the original directory structure, without requiring a torrent client.
-- **Developer friendly** - with the [SDK](https://github.com/webtor-io/embed-sdk-js) you can provide your users with the ability to watch torrent-videos online on your website.
+- **Personal Library:** Organize your own collection by adding torrents to your account. Movies and series will be detected automatically!
+- **Stremio integration** Just install the addon using the link from profile and start watching your library on TV with Stremio.
+- **Developer-friendly** With the [SDK](https://github.com/webtor-io/embed-sdk-js) you can provide your users with the ability to watch torrent-videos online on your website.
 
 ## Quick Setup
 
 1. [Install Docker](https://docs.docker.com/get-docker/).
 2. Start your Webtor instance with the following command:
    ```bash
-   docker run -d -p 8080:8080 -v data:/data --name webtor --restart=always ghcr.io/webtor-io/self-hosted:latest
+   docker run -d -p 8080:8080 -v data:/data -v pgdata:/pgdata --name webtor --restart=always ghcr.io/webtor-io/self-hosted:latest
    ```
 3. Access the UI at <http://localhost:8080>.
 4. You're all set!
@@ -27,7 +29,13 @@ This is the self-hosted version of [webtor.io](https://webtor.io), implemented a
 If you plan to access your instance from a different host or domain, set the `DOMAIN` environment variable like this:
 
 ```bash
-docker run -e DOMAIN=https://example.com -d -p 8080:8080 -v data:/data --name webtor --restart=always ghcr.io/webtor-io/self-hosted:latest
+docker run -e DOMAIN=https://example.com -d -p 8080:8080 -v data:/data -v pgdata:/pgdata --name webtor --restart=always ghcr.io/webtor-io/self-hosted:latest
+```
+
+## Setting Custom Port
+
+```bash
+docker run -e DOMAIN=http://localhost:8085 -d -p 8085:8080 -v data:/data -v pgdata:/pgdata --name webtor --restart=always ghcr.io/webtor-io/self-hosted:latest
 ```
 
 ## Configuring the Autocleaner
@@ -43,3 +51,12 @@ CLEANER_KEEP_FREE=25%
 - `CLEANER_KEEP_FREE` sets the threshold at which cleaning starts.
 
 Both variables can be defined as percentages or as byte values (e.g., `10G` or `100M`).
+
+## Other Custom Variables
+
+- **WAIT_FOR_VPN** - waits for VPN to start (in case you are using Gluetun)
+- **DISABLE_VIDEO_TRANSCODING** - disables video transcoding
+- **STREMIO_ADDON_USER_AGENT** - user agent to use for stremio addon
+- **STREMIO_ADDON_PROXY** - proxy to use for stremio addon (like socks5://user:pass@host:port)
+- **OMDB_API_KEY** - key for OMDB API (for content enrichment in library)
+- **KINOPOISK_UNOFFICIAL_API_KEY** - key for KinoPoisk Unofficial API (for content enrichment in library)
