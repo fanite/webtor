@@ -80,3 +80,4 @@ By default Webtor uses an embedded PostgreSQL database. You can configure the da
 ## Other Custom Variables
 
 - **WAIT_FOR_VPN** - waits for VPN to start (in case you are using Gluetun)
+- **REQUEST_URL_MAPPINGS** - custom mappings for request urls
