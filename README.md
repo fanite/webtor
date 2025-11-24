@@ -24,7 +24,7 @@ This is the self-hosted version of [webtor.io](https://webtor.io), implemented a
 3. Access the UI at <http://localhost:8080>.
 4. You're all set!
 
-You can run your Webtor instance on [ElfHosted](https://store.elfhosted.com/product/webtor/)!
+You can run your Webtor instance on [ElfHosted](https://store.elfhosted.com/product/webtor/elf/10433/)!
 
 ## Setting a Custom Domain
 
