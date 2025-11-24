@@ -24,6 +24,8 @@ This is the self-hosted version of [webtor.io](https://webtor.io), implemented a
 3. Access the UI at <http://localhost:8080>.
 4. You're all set!
 
+You can run your Webtor instance on [ElfHosted](https://store.elfhosted.com/product/webtor/)!
+
 ## Setting a Custom Domain
 
 If you plan to access your instance from a different host or domain, set the `DOMAIN` environment variable like this:
@@ -76,6 +78,11 @@ By default Webtor uses an embedded PostgreSQL database. You can configure the da
 ## Configuring Transcoding
 
 - **DISABLE_VIDEO_TRANSCODING** - disables video transcoding
+
+## Disable UI Features
+
+- **DISABLE_WEBDAV** - disables WebDAV interface
+- **DISABLE_EMBED** - disables embeds support
 
 ## Other Custom Variables
 
